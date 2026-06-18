@@ -5,6 +5,31 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>InventairePro — Collège</title>
 
+  <!-- Police Marianne (administration française) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <style>
+    @font-face {
+      font-family: 'Marianne';
+      src: url('https://cdn.jsdelivr.net/npm/@gouvfr/dsfr@1.11.2/dist/fonts/Marianne-Regular.woff2') format('woff2');
+      font-weight: 400; font-style: normal; font-display: swap;
+    }
+    @font-face {
+      font-family: 'Marianne';
+      src: url('https://cdn.jsdelivr.net/npm/@gouvfr/dsfr@1.11.2/dist/fonts/Marianne-Medium.woff2') format('woff2');
+      font-weight: 500; font-style: normal; font-display: swap;
+    }
+    @font-face {
+      font-family: 'Marianne';
+      src: url('https://cdn.jsdelivr.net/npm/@gouvfr/dsfr@1.11.2/dist/fonts/Marianne-Bold.woff2') format('woff2');
+      font-weight: 700; font-style: normal; font-display: swap;
+    }
+    @font-face {
+      font-family: 'Marianne';
+      src: url('https://cdn.jsdelivr.net/npm/@gouvfr/dsfr@1.11.2/dist/fonts/Marianne-ExtraBold.woff2') format('woff2');
+      font-weight: 800; font-style: normal; font-display: swap;
+    }
+  </style>
+
   <!-- Firebase SDK -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
@@ -25,7 +50,6 @@ const firebaseConfig = {
   appId: "1:1001228854609:web:03618db819cc4802e05f70",
   measurementId: "G-416MJSF1D5"
 };
-
     // =====================================================================
 
     const app = initializeApp(firebaseConfig);
@@ -54,7 +78,7 @@ const firebaseConfig = {
       --radius:    10px;
       --shadow:    0 2px 12px rgba(107,91,158,.10);
       --shadow-lg: 0 8px 32px rgba(107,91,158,.16);
-      --font:      'Segoe UI', system-ui, sans-serif;
+      --font:      'Marianne', 'Segoe UI', system-ui, sans-serif;
     }
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: var(--font); background: var(--bg); color: var(--text); min-height: 100vh; }
@@ -64,13 +88,12 @@ const firebaseConfig = {
     .btn {
       display: inline-flex; align-items: center; gap: 6px;
       padding: 9px 18px; border-radius: var(--radius);
-      font-size: .9rem; font-weight: 600; cursor: pointer;
+      font-family: var(--font); font-size: .9rem; font-weight: 700; cursor: pointer;
       border: none; transition: filter .15s, transform .1s;
     }
     .btn:active { transform: scale(.97); }
     .btn-primary { background: var(--primary); color: #fff; }
     .btn-primary:hover { filter: brightness(1.1); }
-    .btn-accent  { background: var(--accent);  color: #fff; }
     .btn-ghost   { background: transparent; color: var(--primary); border: 1.5px solid var(--primary); }
     .btn-ghost:hover { background: var(--primary-l); }
     .btn-danger  { background: var(--danger); color: #fff; }
@@ -84,15 +107,16 @@ const firebaseConfig = {
       background: var(--surface); outline: none; transition: border-color .2s;
     }
     input:focus, select:focus { border-color: var(--primary); }
-    label { font-size: .82rem; font-weight: 600; color: var(--muted); margin-bottom: 4px; display: block; }
+    label { font-size: .82rem; font-weight: 700; color: var(--muted); margin-bottom: 4px; display: block; }
     .form-group { margin-bottom: 14px; }
 
+    /* ── TOAST ── */
     #toast {
       position: fixed; bottom: 24px; left: 50%;
       transform: translateX(-50%) translateY(80px);
       background: var(--text); color: #fff;
       padding: 10px 22px; border-radius: 50px;
-      font-size: .88rem; font-weight: 600;
+      font-family: var(--font); font-size: .88rem; font-weight: 700;
       box-shadow: var(--shadow-lg); z-index: 9999;
       transition: transform .3s ease, opacity .3s;
       opacity: 0; pointer-events: none;
@@ -101,6 +125,7 @@ const firebaseConfig = {
     #toast.success { background: #27AE60; }
     #toast.error   { background: var(--danger); }
 
+    /* ── MODAL ── */
     .modal-backdrop {
       position: fixed; inset: 0;
       background: rgba(10,8,20,.45);
@@ -114,7 +139,7 @@ const firebaseConfig = {
     }
     @keyframes popIn { from { transform: scale(.92); opacity: 0; } to { transform: scale(1); opacity: 1; } }
     .modal-title {
-      font-size: 1.1rem; font-weight: 700; color: var(--primary);
+      font-size: 1.1rem; font-weight: 800; color: var(--primary);
       margin-bottom: 20px; padding-bottom: 12px;
       border-bottom: 1.5px solid var(--border);
     }
@@ -131,14 +156,11 @@ const firebaseConfig = {
       padding: 40px 36px; width: 100%; max-width: 380px;
       box-shadow: var(--shadow-lg);
     }
-    .login-logo {
-      display: flex; align-items: center; gap: 12px; margin-bottom: 28px;
-    }
+    .login-logo { display: flex; align-items: center; gap: 12px; margin-bottom: 28px; }
     .login-logo-img { width: 48px; height: 48px; object-fit: contain; border-radius: 8px; }
     .login-logo-placeholder {
       width: 48px; height: 48px; border-radius: 8px;
-      background: var(--primary-l); display: flex; align-items: center;
-      justify-content: center; font-size: 1.6rem;
+      background: var(--primary-l); display: flex; align-items: center; justify-content: center; font-size: 1.6rem;
     }
     .login-logo-text h1 { font-size: 1.3rem; font-weight: 800; color: var(--primary); }
     .login-logo-text p  { font-size: .78rem; color: var(--muted); }
@@ -150,7 +172,7 @@ const firebaseConfig = {
     .pin-btn {
       padding: 14px; border-radius: var(--radius);
       background: var(--surface2); border: 1.5px solid var(--border);
-      font-size: 1.2rem; font-weight: 700; cursor: pointer; transition: background .15s;
+      font-family: var(--font); font-size: 1.2rem; font-weight: 700; cursor: pointer; transition: background .15s;
     }
     .pin-btn:hover { background: var(--border); }
     #login-error { color: var(--danger); font-size: .82rem; text-align: center; margin-top: 8px; min-height: 18px; }
@@ -172,17 +194,17 @@ const firebaseConfig = {
     .topbar-user  { font-size: .82rem; color: rgba(255,255,255,.75); }
     .topbar-logout {
       background: rgba(255,255,255,.15); border: none; color: #fff;
-      padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: .8rem;
+      padding: 6px 12px; border-radius: 6px; cursor: pointer;
+      font-family: var(--font); font-size: .8rem; font-weight: 700;
     }
     .topbar-logout:hover { background: rgba(255,255,255,.25); }
 
     .nav {
-      background: var(--surface);
-      border-bottom: 1.5px solid var(--border);
+      background: var(--surface); border-bottom: 1.5px solid var(--border);
       display: flex; gap: 2px; padding: 0 20px; overflow-x: auto;
     }
     .nav-tab {
-      padding: 13px 16px; font-size: .88rem; font-weight: 600;
+      padding: 13px 16px; font-size: .88rem; font-weight: 700;
       color: var(--muted); border-bottom: 3px solid transparent;
       cursor: pointer; white-space: nowrap; transition: color .2s, border-color .2s;
     }
@@ -199,44 +221,65 @@ const firebaseConfig = {
     }
     .page-title { font-size: 1.25rem; font-weight: 800; color: var(--primary); }
 
+    /* ── STATS ── */
     .stats-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 14px; margin-bottom: 24px; }
     .stat-card {
       background: var(--surface); border-radius: var(--radius);
-      padding: 18px 16px; box-shadow: var(--shadow);
-      border-left: 4px solid var(--primary);
+      padding: 18px 16px; box-shadow: var(--shadow); border-left: 4px solid var(--primary);
     }
     .stat-card.accent { border-left-color: var(--accent); }
     .stat-card.green  { border-left-color: #27AE60; }
     .stat-num   { font-size: 2rem; font-weight: 800; color: var(--primary); line-height: 1; }
     .stat-card.accent .stat-num { color: var(--accent); }
     .stat-card.green  .stat-num { color: #27AE60; }
-    .stat-label { font-size: .78rem; color: var(--muted); margin-top: 4px; font-weight: 600; }
+    .stat-label { font-size: .78rem; color: var(--muted); margin-top: 4px; font-weight: 700; }
 
+    /* ── TABLE ── */
     .card { background: var(--surface); border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; }
     .table-wrap { overflow-x: auto; }
     table { width: 100%; border-collapse: collapse; }
     th {
       background: var(--surface2); text-align: left;
-      padding: 10px 14px; font-size: .78rem; font-weight: 700;
+      padding: 10px 14px; font-size: .78rem; font-weight: 800;
       color: var(--muted); text-transform: uppercase; letter-spacing: .04em;
     }
     td { padding: 11px 14px; font-size: .88rem; border-top: 1px solid var(--border); vertical-align: middle; }
     tr:hover td { background: #F9F6EF; }
 
-    .badge { display: inline-block; padding: 3px 10px; border-radius: 50px; font-size: .75rem; font-weight: 700; }
+    /* Ligne cliquable dans le dashboard */
+    tr.clickable-row { cursor: pointer; }
+    tr.clickable-row:hover td { background: var(--primary-l); }
+
+    .badge { display: inline-block; padding: 3px 10px; border-radius: 50px; font-size: .75rem; font-weight: 800; }
     .badge-purple { background: var(--primary-l); color: var(--primary); }
     .badge-green  { background: #D1FAE5; color: #065F46; }
     .badge-orange { background: #FEF3C7; color: #92400E; }
-    .badge-red    { background: #FEE2E2; color: #991B1B; }
 
     .actions { display: flex; gap: 6px; }
 
+    /* ── CATÉGORIE : select + champ "nouvelle catégorie" ── */
+    .cat-row { display: flex; gap: 8px; align-items: center; }
+    .cat-row select { flex: 1; }
+    #new-cat-wrap { display: flex; gap: 6px; margin-top: 6px; }
+    #new-cat-wrap input { flex: 1; }
+
     /* ── QR ── */
     .qr-modal-inner { text-align: center; }
-    .qr-modal-inner h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 6px; }
-    .qr-modal-inner p  { color: var(--muted); font-size: .82rem; margin-bottom: 18px; }
-    #qr-container { display: flex; justify-content: center; margin-bottom: 18px; }
-    #qr-container canvas, #qr-container img { border-radius: 8px; }
+    .qr-modal-inner h3 { font-size: 1.1rem; font-weight: 800; margin-bottom: 6px; }
+    .qr-modal-inner p  { color: var(--muted); font-size: .82rem; margin-bottom: 14px; }
+    #qr-container { display: flex; justify-content: center; margin-bottom: 6px; }
+    /* Le canvas QR + le label SN sont dans un wrapper canvas custom */
+    #qr-canvas-wrap { display: flex; flex-direction: column; align-items: center; gap: 0; }
+    #qr-sn-label {
+      font-family: var(--font); font-weight: 800; letter-spacing: .06em;
+      background: #fff; width: 200px; text-align: center;
+      padding: 4px 0 6px; border: 2px solid #eee; border-top: none;
+      border-radius: 0 0 6px 6px;
+    }
+    #qr-url-display {
+      font-size: .7rem; color: var(--muted); word-break: break-all;
+      background: var(--surface2); padding: 8px; border-radius: 6px; margin-bottom: 16px;
+    }
 
     /* ── SCAN PAGE ── */
     .location-update-card {
@@ -245,7 +288,7 @@ const firebaseConfig = {
       box-shadow: var(--shadow-lg); text-align: center;
     }
     .item-icon { width: 64px; height: 64px; border-radius: 50%; background: var(--primary-l); display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; font-size: 2rem; }
-    .item-sn { font-size: .8rem; color: var(--muted); margin-bottom: 20px; }
+    .item-sn   { font-size: .8rem; color: var(--muted); margin-bottom: 20px; }
 
     /* ── LOGO TAB ── */
     .logo-upload-zone {
@@ -281,34 +324,26 @@ const firebaseConfig = {
 <div id="screen-login">
   <div class="login-card">
     <div class="login-logo">
-      <div id="login-logo-wrap">
-        <div class="login-logo-placeholder">🏫</div>
-      </div>
+      <div id="login-logo-wrap"><div class="login-logo-placeholder">🏫</div></div>
       <div class="login-logo-text">
         <h1>InventairePro</h1>
         <p>Gestion du matériel scolaire</p>
       </div>
     </div>
-
     <div id="login-user-select">
       <div class="form-group">
         <label>Sélectionnez votre compte</label>
-        <select id="login-user-select-el">
-          <option value="">— choisir —</option>
-        </select>
+        <select id="login-user-select-el"><option value="">— choisir —</option></select>
       </div>
       <button class="btn btn-primary" style="width:100%" onclick="UI.loginStep2()">Continuer</button>
     </div>
-
     <div id="login-pin-step" class="hidden">
       <p style="text-align:center;font-size:.88rem;color:var(--muted);margin-bottom:12px">
         Code PIN pour <strong id="login-username-display"></strong>
       </p>
       <div class="pin-row" id="pin-dots">
-        <div class="pin-dot" id="d0"></div>
-        <div class="pin-dot" id="d1"></div>
-        <div class="pin-dot" id="d2"></div>
-        <div class="pin-dot" id="d3"></div>
+        <div class="pin-dot" id="d0"></div><div class="pin-dot" id="d1"></div>
+        <div class="pin-dot" id="d2"></div><div class="pin-dot" id="d3"></div>
       </div>
       <div class="pin-pad" id="pin-pad"></div>
       <p id="login-error"></p>
@@ -322,7 +357,6 @@ const firebaseConfig = {
 
 <!-- ══════════ APP ══════════ -->
 <div id="screen-app" class="hidden">
-
   <div class="topbar">
     <div id="topbar-logo-wrap"><span class="topbar-logo-placeholder">🏫</span></div>
     <span class="topbar-brand">InventairePro</span>
@@ -332,8 +366,8 @@ const firebaseConfig = {
 
   <nav class="nav" id="main-nav">
     <div class="nav-tab active" data-page="dashboard" onclick="UI.goTo('dashboard')">🏠 Tableau de bord</div>
-    <div class="nav-tab" data-page="items"     onclick="UI.goTo('items')">📦 Inventaire</div>
-    <div class="nav-tab" data-page="rooms"     onclick="UI.goTo('rooms')">🏫 Salles</div>
+    <div class="nav-tab" data-page="items"  onclick="UI.goTo('items')">📦 Inventaire</div>
+    <div class="nav-tab" data-page="rooms"  onclick="UI.goTo('rooms')">🏫 Salles</div>
     <div class="nav-tab admin-only hidden" data-page="users" onclick="UI.goTo('users')">👤 Utilisateurs</div>
     <div class="nav-tab admin-only hidden" data-page="logo"  onclick="UI.goTo('logo')">🖼️ Logo</div>
   </nav>
@@ -342,18 +376,22 @@ const firebaseConfig = {
 
     <!-- DASHBOARD -->
     <div id="page-dashboard" class="page hidden">
-      <div class="page-header">
-        <h2 class="page-title">Tableau de bord</h2>
-      </div>
+      <div class="page-header"><h2 class="page-title">Tableau de bord</h2></div>
       <div class="stats-grid" id="stats-grid"></div>
       <div class="card">
         <div class="table-wrap">
           <table>
-            <thead><tr><th>Objet</th><th>N° Série</th><th>Catégorie</th><th>Emplacement actuel</th><th>Dernière modif.</th></tr></thead>
+            <thead><tr>
+              <th>Objet</th><th>N° Série</th><th>Catégorie</th>
+              <th>Emplacement actuel</th><th>Dernière modif.</th>
+            </tr></thead>
             <tbody id="dashboard-tbody"></tbody>
           </table>
         </div>
       </div>
+      <p style="font-size:.78rem;color:var(--muted);margin-top:10px">
+        💡 Cliquez sur une ligne pour modifier l'objet
+      </p>
     </div>
 
     <!-- INVENTAIRE -->
@@ -400,35 +438,33 @@ const firebaseConfig = {
       <div class="card">
         <div class="table-wrap">
           <table>
-            <thead><tr><th>Prénom</th><th>Nom</th><th>Rôle</th><th>Peut créer des objets</th><th>Actions</th></tr></thead>
+            <thead><tr><th>Prénom</th><th>Nom</th><th>Rôle</th><th>Peut créer</th><th>Actions</th></tr></thead>
             <tbody id="users-tbody"></tbody>
           </table>
         </div>
       </div>
     </div>
 
-    <!-- LOGO (admin) -->
+    <!-- LOGO -->
     <div id="page-logo" class="page hidden">
-      <div class="page-header">
-        <h2 class="page-title">Logo de la plateforme</h2>
-      </div>
+      <div class="page-header"><h2 class="page-title">Logo de la plateforme</h2></div>
       <div class="card" style="padding:28px;max-width:500px">
         <p style="color:var(--muted);font-size:.88rem;margin-bottom:20px">
           Le logo s'affiche dans la barre de navigation et sur l'écran de connexion.
-          Formats acceptés : PNG, JPG, SVG. Taille recommandée : carrée, 200×200 px minimum.
+          Formats acceptés : PNG, JPG, SVG. Max 500 Ko. Taille recommandée : 200×200 px.
         </p>
         <label class="logo-upload-zone" for="logo-file-input">
           <input type="file" id="logo-file-input" accept="image/*" onchange="UI.handleLogoUpload(event)">
           <div style="font-size:2rem;margin-bottom:10px">📁</div>
-          <div style="font-weight:600;color:var(--primary)">Cliquez pour choisir une image</div>
+          <div style="font-weight:700;color:var(--primary)">Cliquez pour choisir une image</div>
           <div style="font-size:.8rem;color:var(--muted);margin-top:4px">ou glissez-déposez ici</div>
         </label>
         <div id="logo-preview-wrap" class="logo-preview-wrap hidden">
           <p style="font-size:.82rem;color:var(--muted);margin-bottom:10px">Aperçu :</p>
-          <img id="logo-preview-img" src="" alt="Aperçu du logo">
+          <img id="logo-preview-img" src="" alt="Aperçu">
           <div style="margin-top:16px;display:flex;gap:10px;justify-content:center">
             <button class="btn btn-primary" onclick="UI.saveLogo()">✅ Enregistrer ce logo</button>
-            <button class="btn btn-ghost" onclick="UI.deleteLogo()">🗑 Supprimer le logo</button>
+            <button class="btn btn-ghost"   onclick="UI.deleteLogo()">🗑 Supprimer</button>
           </div>
         </div>
         <div id="logo-current-wrap" class="hidden" style="margin-top:20px;border-top:1.5px solid var(--border);padding-top:16px">
@@ -454,21 +490,27 @@ const firebaseConfig = {
       </div>
     </div>
 
-  </div>
-</div>
+  </div><!-- /content -->
+</div><!-- /screen-app -->
 
 <!-- ══════════ MODALS ══════════ -->
 
+<!-- Item -->
 <div class="modal-backdrop hidden" id="modal-item">
   <div class="modal">
     <div class="modal-title" id="modal-item-title">Ajouter un objet</div>
     <div class="form-group"><label>Nom de l'objet</label><input id="item-name" placeholder="ex: Ventilateur"></div>
     <div class="form-group"><label>Numéro de série</label><input id="item-sn" placeholder="ex: VT-001"></div>
-    <div class="form-group"><label>Catégorie</label>
-      <select id="item-cat">
-        <option>Ventilateur</option><option>Chaise</option><option>Table</option>
-        <option>Projecteur</option><option>Ordinateur</option><option>Autre</option>
-      </select>
+    <div class="form-group">
+      <label>Catégorie</label>
+      <div class="cat-row">
+        <select id="item-cat"></select>
+        <button class="btn btn-ghost btn-sm" onclick="UI.toggleNewCat()" type="button" id="btn-new-cat" title="Nouvelle catégorie">+ Nouvelle</button>
+      </div>
+      <div id="new-cat-wrap" class="hidden">
+        <input id="new-cat-input" placeholder="Nom de la nouvelle catégorie…">
+        <button class="btn btn-primary btn-sm" onclick="UI.addCategory()" type="button">Ajouter</button>
+      </div>
     </div>
     <div class="form-group"><label>Emplacement initial</label><select id="item-room"></select></div>
     <div class="modal-actions">
@@ -478,6 +520,7 @@ const firebaseConfig = {
   </div>
 </div>
 
+<!-- Room -->
 <div class="modal-backdrop hidden" id="modal-room">
   <div class="modal">
     <div class="modal-title" id="modal-room-title">Ajouter une salle</div>
@@ -490,6 +533,7 @@ const firebaseConfig = {
   </div>
 </div>
 
+<!-- User -->
 <div class="modal-backdrop hidden" id="modal-user">
   <div class="modal">
     <div class="modal-title">Ajouter un agent</div>
@@ -512,19 +556,26 @@ const firebaseConfig = {
   </div>
 </div>
 
+<!-- QR -->
 <div class="modal-backdrop hidden" id="modal-qr">
   <div class="modal">
     <div class="qr-modal-inner">
       <h3 id="qr-title"></h3>
-      <p id="qr-subtitle"></p>
-      <div id="qr-container"></div>
-      <p style="font-size:.75rem;color:var(--muted);margin-bottom:16px">
-        Scannez ce QR code pour accéder directement à la fiche de déplacement
+      <p id="qr-subtitle" style="margin-bottom:6px"></p>
+      <div id="qr-container">
+        <div id="qr-canvas-wrap">
+          <!-- QRCode.js insère le canvas ici via JS -->
+          <div id="qr-inner"></div>
+          <div id="qr-sn-label"></div>
+        </div>
+      </div>
+      <p style="font-size:.75rem;color:var(--muted);margin-bottom:10px">
+        Scannez pour accéder directement à la fiche de déplacement
       </p>
-      <div id="qr-url-display" style="font-size:.7rem;color:var(--muted);word-break:break-all;background:var(--surface2);padding:8px;border-radius:6px;margin-bottom:16px"></div>
+      <div id="qr-url-display"></div>
       <div style="display:flex;gap:10px;justify-content:center">
         <button class="btn btn-primary" onclick="UI.printQR()">🖨️ Imprimer</button>
-        <button class="btn btn-ghost" onclick="UI.closeModal('modal-qr')">Fermer</button>
+        <button class="btn btn-ghost"   onclick="UI.closeModal('modal-qr')">Fermer</button>
       </div>
     </div>
   </div>
@@ -535,16 +586,20 @@ const firebaseConfig = {
 const STATE = {
   currentUser: null,
   items: [], rooms: [], users: [],
+  categories: [],
   editItemId: null, editRoomId: null, scanItemId: null,
   pendingLogoBase64: null,
+  // Pour l'impression QR
+  _qrCurrentSN: "",
+  _qrCurrentName: "",
 };
 
 const SESSION_KEY = "inventaire_session";
+const DEFAULT_CATS = ["Ventilateur","Chaise","Table","Projecteur","Ordinateur","Autre"];
 
-function toast(msg, type = "success") {
+function toast(msg, type="success") {
   const t = document.getElementById("toast");
-  t.textContent = msg;
-  t.className = "show " + type;
+  t.textContent = msg; t.className = "show " + type;
   clearTimeout(t._timer);
   t._timer = setTimeout(() => { t.className = ""; }, 3200);
 }
@@ -552,12 +607,11 @@ function $id(id) { return document.getElementById(id); }
 function fmtDate(ts) {
   if (!ts) return "—";
   const d = ts.toDate ? ts.toDate() : new Date(ts);
-  return d.toLocaleDateString("fr-FR", { day: "2-digit", month: "2-digit", year: "numeric" })
-       + " " + d.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" });
+  return d.toLocaleDateString("fr-FR",{day:"2-digit",month:"2-digit",year:"numeric"})
+       + " " + d.toLocaleTimeString("fr-FR",{hour:"2-digit",minute:"2-digit"});
 }
-
-function db()  { return window._db; }
-function fb()  { return window._firebase; }
+function db() { return window._db; }
+function fb() { return window._firebase; }
 
 async function loadAll(col) {
   const { getDocs, collection } = fb();
@@ -565,30 +619,22 @@ async function loadAll(col) {
   return snap.docs.map(d => ({ id: d.id, ...d.data() }));
 }
 
-// ── URL pour QR code ──────────────────────────────────────────────────
-// Construit l'URL absolue de la page en cours, propre (sans query string)
-// puis ajoute ?item=ID — fonctionne sur GitHub Pages, localhost, partout.
 function buildItemUrl(itemId) {
-  const base = window.location.origin + window.location.pathname;
-  return base + "?item=" + itemId;
+  return window.location.origin + window.location.pathname + "?item=" + itemId;
 }
 
-// ── Session ───────────────────────────────────────────────────────────
-function saveSession(u)  { try { localStorage.setItem(SESSION_KEY, JSON.stringify({ id: u.id, pin: u.pin })); } catch(e){} }
+// ── Session ────────────────────────────────────────────────────────────
+function saveSession(u)  { try { localStorage.setItem(SESSION_KEY, JSON.stringify({id:u.id,pin:u.pin})); } catch(e){} }
 function clearSession()  { try { localStorage.removeItem(SESSION_KEY); } catch(e){} }
 function getSaved()      { try { return JSON.parse(localStorage.getItem(SESSION_KEY)); } catch(e){ return null; } }
 
-// ── Logo helpers ──────────────────────────────────────────────────────
+// ── Logo helpers ───────────────────────────────────────────────────────
 function applyLogo(base64) {
   if (!base64) return;
-  // Topbar
-  const tw = $id("topbar-logo-wrap");
-  tw.innerHTML = `<img class="topbar-logo" src="${base64}" alt="Logo">`;
-  // Login
+  $id("topbar-logo-wrap").innerHTML = `<img class="topbar-logo" src="${base64}" alt="Logo">`;
   const lw = $id("login-logo-wrap");
   if (lw) lw.innerHTML = `<img class="login-logo-img" src="${base64}" alt="Logo">`;
 }
-
 async function loadLogo() {
   try {
     const { doc, getDoc } = fb();
@@ -601,11 +647,37 @@ async function loadLogo() {
   } catch(e){}
 }
 
-// ── UI ────────────────────────────────────────────────────────────────
+// ── Catégories ─────────────────────────────────────────────────────────
+async function loadCategories() {
+  try {
+    const { doc, getDoc } = fb();
+    const snap = await getDoc(doc(db(), "settings", "categories"));
+    if (snap.exists() && snap.data().list) {
+      STATE.categories = snap.data().list;
+    } else {
+      STATE.categories = [...DEFAULT_CATS];
+    }
+  } catch(e) {
+    STATE.categories = [...DEFAULT_CATS];
+  }
+}
+async function saveCategories() {
+  const { doc, setDoc } = fb();
+  await setDoc(doc(db(), "settings", "categories"), { list: STATE.categories });
+}
+function populateCatSelect(selectedValue) {
+  const sel = $id("item-cat");
+  sel.innerHTML = STATE.categories.map(c =>
+    `<option value="${c}" ${c === selectedValue ? "selected" : ""}>${c}</option>`
+  ).join("");
+}
+
+// ══════════════════════════════════════════════════════════════════════
 const UI = {
 
   pinBuffer: "",
 
+  // ── LOGIN ────────────────────────────────────────────────────────
   async initLogin() {
     await loadLogo();
     const users = await loadAll("users");
@@ -632,8 +704,7 @@ const UI = {
     $id("login-username-display").textContent = user.firstname + " " + user.lastname;
     $id("login-user-select").classList.add("hidden");
     $id("login-pin-step").classList.remove("hidden");
-    this.pinBuffer = "";
-    this.renderPinDots();
+    this.pinBuffer = ""; this.renderPinDots();
     this.buildPinPad(user);
   },
 
@@ -644,14 +715,12 @@ const UI = {
   },
 
   buildPinPad(user) {
-    const pad = $id("pin-pad");
-    pad.innerHTML = "";
+    const pad = $id("pin-pad"); pad.innerHTML = "";
     [1,2,3,4,5,6,7,8,9,"","0","⌫"].forEach(d => {
       const btn = document.createElement("button");
-      btn.className = "pin-btn";
-      btn.textContent = d === "" ? "" : d;
+      btn.className = "pin-btn"; btn.textContent = d === "" ? "" : d;
       btn.onclick = () => {
-        if (d === "⌫")      { this.pinBuffer = this.pinBuffer.slice(0,-1); }
+        if (d === "⌫")     { this.pinBuffer = this.pinBuffer.slice(0,-1); }
         else if (d !== "" && this.pinBuffer.length < 4) { this.pinBuffer += d; }
         this.renderPinDots();
         if (this.pinBuffer.length === 4) this.checkPin(user);
@@ -671,28 +740,27 @@ const UI = {
       this.startApp(user);
     } else {
       $id("login-error").textContent = "Code PIN incorrect";
-      this.pinBuffer = "";
-      this.renderPinDots();
+      this.pinBuffer = ""; this.renderPinDots();
     }
   },
 
+  // ── APP START ────────────────────────────────────────────────────
   async startApp(user) {
     STATE.currentUser = user;
     $id("screen-login").classList.add("hidden");
     $id("screen-app").classList.remove("hidden");
-    $id("topbar-user").textContent = user.firstname + " " + user.lastname + (user.role === "admin" ? " ⭐" : "");
+    $id("topbar-user").textContent = user.firstname + " " + user.lastname + (user.role==="admin"?" ⭐":"");
 
     if (user.role === "admin") {
       document.querySelectorAll(".admin-only").forEach(el => el.classList.remove("hidden"));
     }
     const canCreate = user.role === "admin" || user.canCreate;
     if (!canCreate) {
-      ["btn-add-item","btn-add-room"].forEach(id => { const el = $id(id); if(el) el.classList.add("hidden"); });
+      ["btn-add-item","btn-add-room"].forEach(id => { const el=$id(id); if(el) el.classList.add("hidden"); });
     }
 
-    await this.loadData();
+    await Promise.all([this.loadData(), loadLogo(), loadCategories()]);
     this.listenRealtime();
-    await loadLogo();
 
     const params = new URLSearchParams(window.location.search);
     const scanId = params.get("item");
@@ -709,44 +777,47 @@ const UI = {
   listenRealtime() {
     const { onSnapshot, collection } = fb();
     onSnapshot(collection(db(), "items"), snap => {
-      STATE.items = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      STATE.items = snap.docs.map(d => ({id:d.id,...d.data()}));
       this.renderItems(); this.renderDashboard();
     });
     onSnapshot(collection(db(), "rooms"), snap => {
-      STATE.rooms = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      STATE.rooms = snap.docs.map(d => ({id:d.id,...d.data()}));
       this.renderRooms(); this.renderDashboard();
     });
   },
 
-  renderAll() { this.renderDashboard(); this.renderItems(); this.renderRooms(); if (STATE.currentUser?.role === "admin") this.renderUsers(); },
+  renderAll() { this.renderDashboard(); this.renderItems(); this.renderRooms(); if (STATE.currentUser?.role==="admin") this.renderUsers(); },
 
   logout() { clearSession(); location.reload(); },
 
   goTo(page, param) {
     document.querySelectorAll(".page").forEach(p => p.classList.add("hidden"));
     document.querySelectorAll(".nav-tab").forEach(t => t.classList.remove("active"));
-    const p = $id("page-" + page); if (p) p.classList.remove("hidden");
+    const p = $id("page-"+page); if (p) p.classList.remove("hidden");
     const tab = document.querySelector(`.nav-tab[data-page="${page}"]`); if (tab) tab.classList.add("active");
     if (page === "scan" && param) this.initScanPage(param);
     if (page === "logo") this.initLogoPage();
   },
 
-  // ── DASHBOARD ─────────────────────────────────────────────────────
+  // ── DASHBOARD ────────────────────────────────────────────────────
   renderDashboard() {
     $id("stats-grid").innerHTML = `
       <div class="stat-card"><div class="stat-num">${STATE.items.length}</div><div class="stat-label">Objets total</div></div>
       <div class="stat-card accent"><div class="stat-num">${STATE.rooms.length}</div><div class="stat-label">Salles</div></div>
       <div class="stat-card green"><div class="stat-num">${[...new Set(STATE.items.map(i=>i.category))].length}</div><div class="stat-label">Catégories</div></div>`;
+
     const tbody = $id("dashboard-tbody");
     if (!STATE.items.length) {
       tbody.innerHTML = `<tr><td colspan="5"><div class="empty"><div class="empty-icon">📦</div><p>Aucun objet dans l'inventaire</p></div></td></tr>`;
       return;
     }
+    const canEdit = STATE.currentUser?.role === "admin" || STATE.currentUser?.canCreate;
     tbody.innerHTML = [...STATE.items]
       .sort((a,b) => (b.updatedAt?.seconds||0) - (a.updatedAt?.seconds||0))
       .map(item => {
         const room = STATE.rooms.find(r => r.id === item.roomId);
-        return `<tr>
+        const clickAttr = canEdit ? `class="clickable-row" onclick="UI.openItemModal('${item.id}')" title="Cliquer pour modifier"` : "";
+        return `<tr ${clickAttr}>
           <td><strong>${item.name}</strong></td>
           <td><code>${item.serialNumber}</code></td>
           <td><span class="badge badge-purple">${item.category}</span></td>
@@ -756,7 +827,7 @@ const UI = {
       }).join("");
   },
 
-  // ── ITEMS ─────────────────────────────────────────────────────────
+  // ── ITEMS ────────────────────────────────────────────────────────
   renderItems() {
     const q = ($id("items-search")?.value||"").toLowerCase();
     const items = STATE.items.filter(i => !q || i.name?.toLowerCase().includes(q) || i.serialNumber?.toLowerCase().includes(q) || i.category?.toLowerCase().includes(q));
@@ -776,7 +847,7 @@ const UI = {
         <td>${room ? "🏫 "+room.name : '<span style="color:var(--muted)">Non assigné</span>'}</td>
         <td style="font-size:.8rem;color:var(--muted)">${adder ? adder.firstname+" "+adder.lastname : "—"}</td>
         <td><div class="actions">
-          <button class="btn btn-ghost btn-sm" onclick="UI.showQR('${item.id}','${item.name}','${item.serialNumber}')">QR</button>
+          <button class="btn btn-ghost btn-sm" onclick="UI.showQR('${item.id}','${item.name.replace(/'/g,"\\'")}','${item.serialNumber}')">QR</button>
           ${canEdit ? `<button class="btn btn-ghost btn-sm" onclick="UI.openItemModal('${item.id}')">✏️</button>
           <button class="btn btn-danger btn-sm" onclick="UI.deleteItem('${item.id}')">🗑</button>` : ""}
         </div></td>
@@ -786,21 +857,52 @@ const UI = {
 
   filterItems() { this.renderItems(); },
 
+  // ── CATÉGORIES ───────────────────────────────────────────────────
+  toggleNewCat() {
+    const wrap = $id("new-cat-wrap");
+    wrap.classList.toggle("hidden");
+    if (!wrap.classList.contains("hidden")) $id("new-cat-input").focus();
+  },
+
+  async addCategory() {
+    const val = $id("new-cat-input").value.trim();
+    if (!val) { toast("Entrez un nom de catégorie", "error"); return; }
+    if (STATE.categories.includes(val)) { toast("Cette catégorie existe déjà", "error"); return; }
+    STATE.categories.push(val);
+    await saveCategories();
+    populateCatSelect(val);
+    $id("new-cat-input").value = "";
+    $id("new-cat-wrap").classList.add("hidden");
+    toast("Catégorie « "+val+" » ajoutée ✅");
+  },
+
+  // ── ITEM MODAL ───────────────────────────────────────────────────
   openItemModal(id) {
     STATE.editItemId = id || null;
     $id("modal-item-title").textContent = id ? "Modifier l'objet" : "Ajouter un objet";
     $id("item-room").innerHTML = STATE.rooms.map(r => `<option value="${r.id}">${r.name}</option>`).join("");
+    $id("new-cat-wrap").classList.add("hidden");
+    $id("new-cat-input").value = "";
     if (id) {
       const item = STATE.items.find(i => i.id === id);
-      if (item) { $id("item-name").value = item.name; $id("item-sn").value = item.serialNumber; $id("item-cat").value = item.category; $id("item-room").value = item.roomId||""; }
-    } else { $id("item-name").value = ""; $id("item-sn").value = ""; }
+      if (item) {
+        $id("item-name").value = item.name;
+        $id("item-sn").value   = item.serialNumber;
+        $id("item-room").value = item.roomId || "";
+        populateCatSelect(item.category);
+      }
+    } else {
+      $id("item-name").value = "";
+      $id("item-sn").value   = "";
+      populateCatSelect("");
+    }
     $id("modal-item").classList.remove("hidden");
   },
 
   async saveItem() {
-    const name = $id("item-name").value.trim();
-    const sn   = $id("item-sn").value.trim();
-    const cat  = $id("item-cat").value;
+    const name   = $id("item-name").value.trim();
+    const sn     = $id("item-sn").value.trim();
+    const cat    = $id("item-cat").value;
     const roomId = $id("item-room").value;
     if (!name || !sn) { toast("Nom et numéro de série requis", "error"); return; }
     const { doc, setDoc, updateDoc, serverTimestamp, collection } = fb();
@@ -823,7 +925,7 @@ const UI = {
     toast("Objet supprimé");
   },
 
-  // ── ROOMS ─────────────────────────────────────────────────────────
+  // ── ROOMS ────────────────────────────────────────────────────────
   renderRooms() {
     const tbody = $id("rooms-tbody");
     if (!STATE.rooms.length) {
@@ -876,7 +978,7 @@ const UI = {
     toast("Salle supprimée");
   },
 
-  // ── USERS ─────────────────────────────────────────────────────────
+  // ── USERS ────────────────────────────────────────────────────────
   renderUsers() {
     const tbody = $id("users-tbody");
     if (!STATE.users.length) {
@@ -920,33 +1022,81 @@ const UI = {
     toast("Utilisateur supprimé");
   },
 
-  // ── QR CODE ───────────────────────────────────────────────────────
+  // ── QR CODE ──────────────────────────────────────────────────────
   showQR(id, name, sn) {
-    const url = buildItemUrl(id);   // ← URL correcte, dynamique
-    $id("qr-title").textContent = name;
+    const url = buildItemUrl(id);
+    STATE._qrCurrentSN   = sn;
+    STATE._qrCurrentName = name;
+
+    $id("qr-title").textContent    = name;
     $id("qr-subtitle").textContent = "N° de série : " + sn;
     $id("qr-url-display").textContent = url;
-    const container = $id("qr-container");
-    container.innerHTML = "";
-    new QRCode(container, { text: url, width: 200, height: 200, correctLevel: QRCode.CorrectLevel.H });
+
+    // Génère le QR code dans #qr-inner
+    const inner = $id("qr-inner");
+    inner.innerHTML = "";
+    new QRCode(inner, { text: url, width: 200, height: 200, correctLevel: QRCode.CorrectLevel.H });
+
+    // Label SN sous le QR : hauteur = 200 * 0.25 = 50px → font-size ~20px
+    const label = $id("qr-sn-label");
+    label.textContent  = sn;
+    label.style.fontSize   = "20px";
+    label.style.lineHeight = "50px";
+    label.style.height     = "50px";
+
     $id("modal-qr").classList.remove("hidden");
   },
 
+  // Compose un canvas unique QR + bandeau SN pour l'impression
+  _buildPrintCanvas() {
+    const srcCanvas = document.querySelector("#qr-inner canvas");
+    if (!srcCanvas) return null;
+    const qrSize   = 200;
+    const snHeight = Math.round(qrSize * 0.25); // 50px
+    const padding  = 16;
+
+    const cvs = document.createElement("canvas");
+    cvs.width  = qrSize + padding * 2;
+    cvs.height = qrSize + snHeight + padding * 2;
+    const ctx  = cvs.getContext("2d");
+
+    // Fond blanc
+    ctx.fillStyle = "#fff";
+    ctx.fillRect(0, 0, cvs.width, cvs.height);
+
+    // QR code
+    ctx.drawImage(srcCanvas, padding, padding, qrSize, qrSize);
+
+    // Bandeau SN
+    ctx.fillStyle = "#f4f4f4";
+    ctx.fillRect(padding, padding + qrSize, qrSize, snHeight);
+    ctx.strokeStyle = "#ddd";
+    ctx.strokeRect(padding, padding + qrSize, qrSize, snHeight);
+
+    ctx.fillStyle = "#2C2416";
+    ctx.font = `bold ${Math.round(snHeight * 0.42)}px 'Marianne', 'Segoe UI', sans-serif`;
+    ctx.textAlign    = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillText(STATE._qrCurrentSN, padding + qrSize / 2, padding + qrSize + snHeight / 2);
+
+    return cvs;
+  },
+
   printQR() {
-    const canvas = document.querySelector("#qr-container canvas");
-    if (!canvas) return;
+    const cvs = this._buildPrintCanvas();
+    if (!cvs) { toast("QR code non disponible", "error"); return; }
     const w = window.open("", "_blank");
-    w.document.write(`<html><body style="text-align:center;font-family:sans-serif;padding:30px">
-      <h2>${$id("qr-title").textContent}</h2>
-      <p>${$id("qr-subtitle").textContent}</p>
-      <img src="${canvas.toDataURL()}" style="width:200px;margin:16px 0;display:block;margin-left:auto;margin-right:auto">
-      <p style="font-size:.75rem;color:#999">Scannez pour mettre à jour l'emplacement</p>
+    w.document.write(`<html><body style="text-align:center;font-family:'Marianne','Segoe UI',sans-serif;padding:30px">
+      <h2 style="margin-bottom:4px">${STATE._qrCurrentName}</h2>
+      <p style="color:#7A6E60;margin-bottom:16px">N° de série : ${STATE._qrCurrentSN}</p>
+      <img src="${cvs.toDataURL()}" style="max-width:260px;display:block;margin:0 auto">
+      <p style="font-size:.75rem;color:#999;margin-top:12px">Scannez pour mettre à jour l'emplacement</p>
       <script>window.onload=()=>{window.print();window.close()}<\/script>
     </body></html>`);
     w.document.close();
   },
 
-  // ── SCAN PAGE ─────────────────────────────────────────────────────
+  // ── SCAN PAGE ────────────────────────────────────────────────────
   async initScanPage(itemId) {
     STATE.scanItemId = itemId;
     const { doc, getDoc } = fb();
@@ -957,8 +1107,7 @@ const UI = {
     $id("scan-item-sn").textContent   = "N° série : " + item.serialNumber;
     const currentRoom = STATE.rooms.find(r => r.id === item.roomId);
     $id("scan-current-room").textContent = currentRoom ? "🏫 " + currentRoom.name : "Non assigné";
-    const sel = $id("scan-room-select");
-    sel.innerHTML = STATE.rooms.map(r =>
+    $id("scan-room-select").innerHTML = STATE.rooms.map(r =>
       `<option value="${r.id}" ${r.id === item.roomId ? "selected" : ""}>${r.name}</option>`
     ).join("");
   },
@@ -975,7 +1124,7 @@ const UI = {
     setTimeout(() => this.goTo("dashboard"), 1400);
   },
 
-  // ── LOGO PAGE ─────────────────────────────────────────────────────
+  // ── LOGO PAGE ────────────────────────────────────────────────────
   async initLogoPage() {
     STATE.pendingLogoBase64 = null;
     $id("logo-preview-wrap").classList.add("hidden");
@@ -985,9 +1134,7 @@ const UI = {
       if (snap.exists() && snap.data().base64) {
         $id("logo-current-img").src = snap.data().base64;
         $id("logo-current-wrap").classList.remove("hidden");
-      } else {
-        $id("logo-current-wrap").classList.add("hidden");
-      }
+      } else { $id("logo-current-wrap").classList.add("hidden"); }
     } catch(e){}
   },
 
