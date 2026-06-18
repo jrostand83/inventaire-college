@@ -62,6 +62,9 @@ const firebaseConfig = {
   <!-- QR Code library -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 
+  <!-- Excel export library (SheetJS) -->
+  <script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
+
   <style>
     :root {
       --bg:        #F5F0E8;
@@ -382,7 +385,7 @@ const firebaseConfig = {
         <div class="table-wrap">
           <table>
             <thead><tr>
-              <th>Objet</th><th>N° Série</th><th>Catégorie</th>
+              <th>Objet</th><th>N° Inventaire</th><th>Catégorie</th>
               <th>Emplacement actuel</th><th>Dernière modif.</th>
             </tr></thead>
             <tbody id="dashboard-tbody"></tbody>
@@ -406,7 +409,7 @@ const firebaseConfig = {
       <div class="card">
         <div class="table-wrap">
           <table>
-            <thead><tr><th>Nom</th><th>N° Série</th><th>Catégorie</th><th>Emplacement</th><th>Ajouté par</th><th>Actions</th></tr></thead>
+            <thead><tr><th>Nom</th><th>N° Inventaire</th><th>Catégorie</th><th>Emplacement</th><th>Ajouté par</th><th>Actions</th></tr></thead>
             <tbody id="items-tbody"></tbody>
           </table>
         </div>
@@ -433,7 +436,10 @@ const firebaseConfig = {
     <div id="page-users" class="page hidden">
       <div class="page-header">
         <h2 class="page-title">Utilisateurs</h2>
-        <button class="btn btn-primary" onclick="UI.openUserModal()">+ Ajouter un agent</button>
+        <div style="display:flex;gap:10px;flex-wrap:wrap">
+          <button class="btn btn-ghost" onclick="UI.exportToExcel()">📊 Exporter toutes les données (Excel)</button>
+          <button class="btn btn-primary" onclick="UI.openUserModal()">+ Ajouter un agent</button>
+        </div>
       </div>
       <div class="card">
         <div class="table-wrap">
@@ -500,7 +506,7 @@ const firebaseConfig = {
   <div class="modal">
     <div class="modal-title" id="modal-item-title">Ajouter un objet</div>
     <div class="form-group"><label>Nom de l'objet</label><input id="item-name" placeholder="ex: Ventilateur"></div>
-    <div class="form-group"><label>Numéro de série</label><input id="item-sn" placeholder="ex: VT-001"></div>
+    <div class="form-group"><label>Numéro d'inventaire</label><input id="item-sn" placeholder="ex: VT-001"></div>
     <div class="form-group">
       <label>Catégorie</label>
       <div class="cat-row">
@@ -573,8 +579,9 @@ const firebaseConfig = {
         Scannez pour accéder directement à la fiche de déplacement
       </p>
       <div id="qr-url-display"></div>
-      <div style="display:flex;gap:10px;justify-content:center">
-        <button class="btn btn-primary" onclick="UI.printQR()">🖨️ Imprimer</button>
+      <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+        <button class="btn btn-primary" onclick="UI.downloadQR()">📥 Télécharger</button>
+        <button class="btn btn-ghost"   onclick="UI.printQR()">🖨️ Imprimer</button>
         <button class="btn btn-ghost"   onclick="UI.closeModal('modal-qr')">Fermer</button>
       </div>
     </div>
@@ -667,8 +674,9 @@ async function saveCategories() {
 }
 function populateCatSelect(selectedValue) {
   const sel = $id("item-cat");
-  sel.innerHTML = STATE.categories.map(c =>
-    `<option value="${c}" ${c === selectedValue ? "selected" : ""}>${c}</option>`
+  sel.innerHTML = [...STATE.categories]
+    .sort((a,b) => a.localeCompare(b, "fr"))
+    .map(c => `<option value="${c}" ${c === selectedValue ? "selected" : ""}>${c}</option>`
   ).join("");
 }
 
@@ -684,7 +692,9 @@ const UI = {
     STATE.users = users;
     const sel = $id("login-user-select-el");
     sel.innerHTML = '<option value="">— choisir —</option>';
-    users.forEach(u => {
+    [...users]
+      .sort((a,b) => (a.firstname||"").localeCompare(b.firstname||"", "fr") || (a.lastname||"").localeCompare(b.lastname||"", "fr"))
+      .forEach(u => {
       const opt = document.createElement("option");
       opt.value = u.id;
       opt.textContent = u.firstname + " " + u.lastname + (u.role === "admin" ? " ⭐" : "");
@@ -830,7 +840,9 @@ const UI = {
   // ── ITEMS ────────────────────────────────────────────────────────
   renderItems() {
     const q = ($id("items-search")?.value||"").toLowerCase();
-    const items = STATE.items.filter(i => !q || i.name?.toLowerCase().includes(q) || i.serialNumber?.toLowerCase().includes(q) || i.category?.toLowerCase().includes(q));
+    const items = STATE.items
+      .filter(i => !q || i.name?.toLowerCase().includes(q) || i.serialNumber?.toLowerCase().includes(q) || i.category?.toLowerCase().includes(q))
+      .sort((a,b) => (a.name||"").localeCompare(b.name||"", "fr"));
     const tbody = $id("items-tbody");
     if (!items.length) {
       tbody.innerHTML = `<tr><td colspan="6"><div class="empty"><div class="empty-icon">📦</div><p>Aucun objet trouvé</p></div></td></tr>`;
@@ -880,7 +892,9 @@ const UI = {
   openItemModal(id) {
     STATE.editItemId = id || null;
     $id("modal-item-title").textContent = id ? "Modifier l'objet" : "Ajouter un objet";
-    $id("item-room").innerHTML = STATE.rooms.map(r => `<option value="${r.id}">${r.name}</option>`).join("");
+    $id("item-room").innerHTML = [...STATE.rooms]
+      .sort((a,b) => (a.name||"").localeCompare(b.name||"", "fr"))
+      .map(r => `<option value="${r.id}">${r.name}</option>`).join("");
     $id("new-cat-wrap").classList.add("hidden");
     $id("new-cat-input").value = "";
     if (id) {
@@ -904,7 +918,7 @@ const UI = {
     const sn     = $id("item-sn").value.trim();
     const cat    = $id("item-cat").value;
     const roomId = $id("item-room").value;
-    if (!name || !sn) { toast("Nom et numéro de série requis", "error"); return; }
+    if (!name || !sn) { toast("Nom et numéro d'inventaire requis", "error"); return; }
     const { doc, setDoc, updateDoc, serverTimestamp, collection } = fb();
     const data = { name, serialNumber: sn, category: cat, roomId, updatedAt: serverTimestamp() };
     if (STATE.editItemId) {
@@ -933,7 +947,9 @@ const UI = {
       return;
     }
     const canEdit = STATE.currentUser?.role === "admin" || STATE.currentUser?.canCreate;
-    tbody.innerHTML = STATE.rooms.map(room => {
+    tbody.innerHTML = [...STATE.rooms]
+      .sort((a,b) => (a.name||"").localeCompare(b.name||"", "fr"))
+      .map(room => {
       const count = STATE.items.filter(i => i.roomId === room.id).length;
       return `<tr>
         <td><strong>${room.name}</strong></td>
@@ -985,7 +1001,9 @@ const UI = {
       tbody.innerHTML = `<tr><td colspan="5"><div class="empty"><div class="empty-icon">👤</div><p>Aucun utilisateur</p></div></td></tr>`;
       return;
     }
-    tbody.innerHTML = STATE.users.map(u => `<tr>
+    tbody.innerHTML = [...STATE.users]
+      .sort((a,b) => (a.lastname||"").localeCompare(b.lastname||"", "fr") || (a.firstname||"").localeCompare(b.firstname||"", "fr"))
+      .map(u => `<tr>
       <td>${u.firstname}</td><td>${u.lastname}</td>
       <td><span class="badge ${u.role==="admin"?"badge-orange":"badge-purple"}">${u.role}</span></td>
       <td>${u.canCreate?"✅":"—"}</td>
@@ -1029,7 +1047,7 @@ const UI = {
     STATE._qrCurrentName = name;
 
     $id("qr-title").textContent    = name;
-    $id("qr-subtitle").textContent = "N° de série : " + sn;
+    $id("qr-subtitle").textContent = "N° d'inventaire : " + sn;
     $id("qr-url-display").textContent = url;
 
     // Génère le QR code dans #qr-inner
@@ -1045,6 +1063,22 @@ const UI = {
     label.style.height     = "50px";
 
     $id("modal-qr").classList.remove("hidden");
+
+    // Téléchargement automatique du QR code (nom de fichier = numéro d'inventaire)
+    setTimeout(() => this.downloadQR(), 60);
+  },
+
+  // Télécharge le QR actuellement affiché, nommé d'après le numéro d'inventaire
+  downloadQR() {
+    const cvs = this._buildPrintCanvas();
+    if (!cvs) { toast("QR code non disponible", "error"); return; }
+    const safeName = (STATE._qrCurrentSN || "qr-code").replace(/[\\/:*?"<>|]/g, "-");
+    const link = document.createElement("a");
+    link.download = safeName + ".png";
+    link.href = cvs.toDataURL("image/png");
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   },
 
   // Compose un canvas unique QR + bandeau SN pour l'impression
@@ -1088,7 +1122,7 @@ const UI = {
     const w = window.open("", "_blank");
     w.document.write(`<html><body style="text-align:center;font-family:'Marianne','Segoe UI',sans-serif;padding:30px">
       <h2 style="margin-bottom:4px">${STATE._qrCurrentName}</h2>
-      <p style="color:#7A6E60;margin-bottom:16px">N° de série : ${STATE._qrCurrentSN}</p>
+      <p style="color:#7A6E60;margin-bottom:16px">N° d'inventaire : ${STATE._qrCurrentSN}</p>
       <img src="${cvs.toDataURL()}" style="max-width:260px;display:block;margin:0 auto">
       <p style="font-size:.75rem;color:#999;margin-top:12px">Scannez pour mettre à jour l'emplacement</p>
       <script>window.onload=()=>{window.print();window.close()}<\/script>
@@ -1104,11 +1138,12 @@ const UI = {
     if (!snap.exists()) { toast("Objet introuvable", "error"); this.goTo("dashboard"); return; }
     const item = { id: snap.id, ...snap.data() };
     $id("scan-item-name").textContent = item.name;
-    $id("scan-item-sn").textContent   = "N° série : " + item.serialNumber;
+    $id("scan-item-sn").textContent   = "N° inventaire : " + item.serialNumber;
     const currentRoom = STATE.rooms.find(r => r.id === item.roomId);
     $id("scan-current-room").textContent = currentRoom ? "🏫 " + currentRoom.name : "Non assigné";
-    $id("scan-room-select").innerHTML = STATE.rooms.map(r =>
-      `<option value="${r.id}" ${r.id === item.roomId ? "selected" : ""}>${r.name}</option>`
+    $id("scan-room-select").innerHTML = [...STATE.rooms]
+      .sort((a,b) => (a.name||"").localeCompare(b.name||"", "fr"))
+      .map(r => `<option value="${r.id}" ${r.id === item.roomId ? "selected" : ""}>${r.name}</option>`
     ).join("");
   },
 
@@ -1172,6 +1207,64 @@ const UI = {
     $id("logo-preview-wrap").classList.add("hidden");
     STATE.pendingLogoBase64 = null;
     toast("Logo supprimé");
+  },
+
+  // ── EXPORT EXCEL ─────────────────────────────────────────────────
+  exportToExcel() {
+    if (typeof XLSX === "undefined") {
+      toast("Bibliothèque d'export indisponible (vérifiez la connexion internet)", "error");
+      return;
+    }
+
+    const wb = XLSX.utils.book_new();
+
+    // Feuille Objets
+    const itemsData = [...STATE.items]
+      .sort((a,b) => (a.name||"").localeCompare(b.name||"", "fr"))
+      .map(item => {
+        const room  = STATE.rooms.find(r => r.id === item.roomId);
+        const adder = STATE.users.find(u => u.id === item.addedBy);
+        return {
+          "Nom":                    item.name || "",
+          "Numéro d'inventaire":    item.serialNumber || "",
+          "Catégorie":              item.category || "",
+          "Emplacement":            room ? room.name : "Non assigné",
+          "Ajouté par":             adder ? (adder.firstname+" "+adder.lastname) : "",
+          "Dernière modification":  fmtDate(item.updatedAt),
+        };
+      });
+    XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(itemsData), "Objets");
+
+    // Feuille Salles
+    const roomsData = [...STATE.rooms]
+      .sort((a,b) => (a.name||"").localeCompare(b.name||"", "fr"))
+      .map(room => ({
+        "Nom de la salle":  room.name || "",
+        "Description":      room.desc || "",
+        "Nombre d'objets":  STATE.items.filter(i => i.roomId === room.id).length,
+      }));
+    XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(roomsData), "Salles");
+
+    // Feuille Utilisateurs
+    const usersData = [...STATE.users]
+      .sort((a,b) => (a.lastname||"").localeCompare(b.lastname||"", "fr"))
+      .map(u => ({
+        "Prénom":     u.firstname || "",
+        "Nom":        u.lastname || "",
+        "Rôle":       u.role === "admin" ? "Admin" : "Agent",
+        "Peut créer": u.canCreate ? "Oui" : "Non",
+      }));
+    XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(usersData), "Utilisateurs");
+
+    // Feuille Catégories
+    const catsData = [...STATE.categories]
+      .sort((a,b) => a.localeCompare(b, "fr"))
+      .map(c => ({ "Catégorie": c }));
+    XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(catsData), "Catégories");
+
+    const dateStr = new Date().toISOString().slice(0,10);
+    XLSX.writeFile(wb, `inventaire-export-${dateStr}.xlsx`);
+    toast("Export Excel généré ✅");
   },
 
   closeModal(id) { $id(id).classList.add("hidden"); },
